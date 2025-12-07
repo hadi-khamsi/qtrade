@@ -10,74 +10,64 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 public class YahooFinanceService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final Map<String, CachedStockData> cache;
-    private static final int CACHE_DURATION_MINUTES = 15;
+
+    private static final long API_DELAY_MS = 2000;
+    private static final String YAHOO_FINANCE_CHART_URL =
+            "https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&range=1d";
+    private static final String USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
 
     public YahooFinanceService() {
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
-        this.cache = new HashMap<>();
     }
 
     public StockDataResponse fetchStockData(String ticker) {
         String upperTicker = ticker.toUpperCase();
 
-        // Check cache first
-        CachedStockData cached = cache.get(upperTicker);
-        if (cached != null && cached.isValid()) {
-            System.out.println("Using cached data for " + upperTicker);
-            return cached.data;
-        }
-
-        // Fetch fresh data
         try {
-            Thread.sleep(2000); // 2 second delay between API calls
+            // Rate limiting delay to prevent HTTP 429 errors from Yahoo Finance
+            Thread.sleep(API_DELAY_MS);
 
-            String url = String.format(
-                    "https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&range=1d",
-                    upperTicker
-            );
+            String url = String.format(YAHOO_FINANCE_CHART_URL, upperTicker);
 
+            // User-Agent header required to avoid request blocking
             HttpHeaders headers = new HttpHeaders();
-            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+            headers.set("User-Agent", USER_AGENT);
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             String responseBody = response.getBody();
 
+            // Parse Yahoo Finance JSON response structure
             JsonNode root = objectMapper.readTree(responseBody);
             JsonNode result = root.path("chart").path("result").get(0);
             JsonNode meta = result.path("meta");
             JsonNode quote = result.path("indicators").path("quote").get(0);
 
+            // Extract stock metadata
             String symbol = meta.path("symbol").asText();
             String name = meta.path("longName").asText(symbol);
             double currentPrice = meta.path("regularMarketPrice").asDouble();
             double previousClose = meta.path("chartPreviousClose").asDouble();
             double changePercent = ((currentPrice - previousClose) / previousClose) * 100;
 
+            // Extract volume data
+            // Yahoo returns volume as first element in array for current day
             long volume = 0;
             JsonNode volumeNode = quote.path("volume");
             if (volumeNode.isArray() && volumeNode.size() > 0) {
                 volume = volumeNode.get(0).asLong();
             }
 
-            StockDataResponse stockData = new StockDataResponse(symbol, name, currentPrice, previousClose, changePercent, volume);
+            System.out.println("[API CALL] Fetched data for " + upperTicker + " at $" + currentPrice);
 
-            // Cache the result
-            cache.put(upperTicker, new CachedStockData(stockData));
-            System.out.println("Fetched and cached fresh data for " + upperTicker + " at $" + currentPrice);
-
-            return stockData;
+            return new StockDataResponse(symbol, name, currentPrice, previousClose, changePercent, volume);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -90,19 +80,5 @@ public class YahooFinanceService {
 
     public double fetchCurrentPrice(String ticker) {
         return fetchStockData(ticker).getCurrentPrice();
-    }
-
-    private static class CachedStockData {
-        StockDataResponse data;
-        LocalDateTime timestamp;
-
-        CachedStockData(StockDataResponse data) {
-            this.data = data;
-            this.timestamp = LocalDateTime.now();
-        }
-
-        boolean isValid() {
-            return LocalDateTime.now().isBefore(timestamp.plusMinutes(CACHE_DURATION_MINUTES));
-        }
     }
 }

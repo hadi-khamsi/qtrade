@@ -1,10 +1,8 @@
 package com.qtrade.controller;
 
-import com.qtrade.dto.CreateStockRequest;
-import com.qtrade.dto.StockDataResponse;
-import com.qtrade.dto.StockResponse;
-import com.qtrade.dto.UpdatePriceRequest;
+import com.qtrade.dto.*;
 import com.qtrade.entity.Stock;
+import com.qtrade.service.ProbabilisticPriceService;
 import com.qtrade.service.StockService;
 import com.qtrade.service.YahooFinanceService;
 import org.springframework.http.HttpStatus;
@@ -20,10 +18,13 @@ public class StockController {
 
     private final StockService stockService;
     private final YahooFinanceService yahooFinanceService;
+    private final ProbabilisticPriceService probabilisticPriceService;
 
-    public StockController(StockService stockService, YahooFinanceService yahooFinanceService) {
+    public StockController(StockService stockService, YahooFinanceService yahooFinanceService,
+                           ProbabilisticPriceService probabilisticPriceService) {
         this.stockService = stockService;
         this.yahooFinanceService = yahooFinanceService;
+        this.probabilisticPriceService = probabilisticPriceService;
     }
 
     @PostMapping
@@ -70,6 +71,13 @@ public class StockController {
     public ResponseEntity<StockDataResponse> getStockQuote(@PathVariable String ticker) {
         StockDataResponse data = yahooFinanceService.fetchStockData(ticker);
         return ResponseEntity.ok(data);
+    }
+
+    // ===== NEW ENDPOINT: Probabilistic Price Range =====
+    @GetMapping("/range/{ticker}")
+    public ResponseEntity<ProbabilisticRangeResponse> getProbabilisticRange(@PathVariable String ticker) {
+        ProbabilisticRangeResponse range = probabilisticPriceService.calculateProbabilisticRange(ticker);
+        return ResponseEntity.ok(range);
     }
 
     @PutMapping("/refresh/{ticker}")
