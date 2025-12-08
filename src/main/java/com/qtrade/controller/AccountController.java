@@ -1,8 +1,8 @@
 package com.qtrade.controller;
 
 import com.qtrade.dto.*;
-import com.qtrade.entity.Account;
-import com.qtrade.service.AccountService;
+import com.qtrade.entity.broker.Account;
+import com.qtrade.service.broker.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

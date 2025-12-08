@@ -2,8 +2,8 @@ package com.qtrade.controller;
 
 import com.qtrade.dto.OrderResponse;
 import com.qtrade.dto.PlaceOrderRequest;
-import com.qtrade.entity.Order;
-import com.qtrade.service.OrderService;
+import com.qtrade.entity.broker.Order;
+import com.qtrade.service.broker.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

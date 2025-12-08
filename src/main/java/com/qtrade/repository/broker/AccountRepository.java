@@ -1,6 +1,6 @@
-package com.qtrade.repository;
+package com.qtrade.repository.broker;
 
-import com.qtrade.entity.Account;
+import com.qtrade.entity.broker.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

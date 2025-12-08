@@ -1,9 +1,9 @@
-package com.qtrade.service;
+package com.qtrade.service.broker;
 
-import com.qtrade.entity.Account;
-import com.qtrade.entity.Order;
-import com.qtrade.entity.Stock;
-import com.qtrade.repository.OrderRepository;
+import com.qtrade.entity.broker.Account;
+import com.qtrade.entity.broker.Order;
+import com.qtrade.entity.broker.Stock;
+import com.qtrade.repository.broker.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

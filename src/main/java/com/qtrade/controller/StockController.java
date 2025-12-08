@@ -1,10 +1,10 @@
 package com.qtrade.controller;
 
 import com.qtrade.dto.*;
-import com.qtrade.entity.Stock;
-import com.qtrade.service.ProbabilisticPriceService;
-import com.qtrade.service.StockService;
-import com.qtrade.service.YahooFinanceService;
+import com.qtrade.entity.broker.Stock;
+import com.qtrade.service.broker.ProbabilisticPriceService;
+import com.qtrade.service.broker.StockService;
+import com.qtrade.service.broker.YahooFinanceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

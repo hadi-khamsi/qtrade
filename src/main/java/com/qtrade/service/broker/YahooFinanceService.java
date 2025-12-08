@@ -1,4 +1,4 @@
-package com.qtrade.service;
+package com.qtrade.service.broker;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

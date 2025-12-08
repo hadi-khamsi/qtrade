@@ -1,8 +1,8 @@
-package com.qtrade.service;
+package com.qtrade.service.broker;
 
 import com.qtrade.dto.StockDataResponse;
-import com.qtrade.entity.Stock;
-import com.qtrade.repository.StockRepository;
+import com.qtrade.entity.broker.Stock;
+import com.qtrade.repository.broker.StockRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

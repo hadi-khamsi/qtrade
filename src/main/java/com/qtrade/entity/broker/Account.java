@@ -1,4 +1,4 @@
-package com.qtrade.entity;
+package com.qtrade.entity.broker;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;

@@ -2,10 +2,10 @@ package com.qtrade.controller;
 
 import com.qtrade.dto.PortfolioResponse;
 import com.qtrade.dto.PortfolioSummaryResponse;
-import com.qtrade.entity.Account;
-import com.qtrade.entity.Portfolio;
-import com.qtrade.service.AccountService;
-import com.qtrade.service.PortfolioService;
+import com.qtrade.entity.broker.Account;
+import com.qtrade.entity.broker.Portfolio;
+import com.qtrade.service.broker.AccountService;
+import com.qtrade.service.broker.PortfolioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

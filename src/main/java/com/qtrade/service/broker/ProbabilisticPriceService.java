@@ -1,4 +1,4 @@
-package com.qtrade.service;
+package com.qtrade.service.broker;
 
 import com.qtrade.dto.FactorBreakdown;
 import com.qtrade.dto.ProbabilisticRangeResponse;
